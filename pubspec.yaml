@@ -1,0 +1,8 @@
+name: pastel
+version: 0.0.1
+author: Laszlo E Kovacs <laszloekovacs@gmail.com>
+description: A mini web server framework
+publish_to: none
+dependencies:
+  sdk: < 2.0.0
+  test: any
