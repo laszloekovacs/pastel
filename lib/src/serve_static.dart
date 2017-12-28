@@ -2,4 +2,15 @@ part of pastel;
 
 // serving static files
 
-void serveStatic(HttpRequest request) {}
+Future serveStatic(HttpRequest request) async {
+  
+  if (request.method == "GET") {
+    String path = " ${settings["context_path"]}${request.uri}"; 
+    
+    File file = new File("${path}index.html");
+
+    if (file.existsSync()) {
+      await file.openRead().pipe(request.response);
+    }
+  }
+}
