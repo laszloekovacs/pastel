@@ -1,11 +1,9 @@
 
-import 'package:pastel/pastel.dart';
+import 'package:pastel/pastel.dart' as pastel;
 
 
 
 void main() {
-  
-  Pastel p = new Pastel();
-  
-  p.run("localhost", 8080);
+
+  pastel.run("localhost", 8080);
 }

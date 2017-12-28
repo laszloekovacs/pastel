@@ -1,6 +1,6 @@
+/*
+Map<String, String> uris = {
+  r"^/$" : "viewFunction"
+};
 
-
-
-Map uris = {
-  { r"^/$" :  }
-}
+*/

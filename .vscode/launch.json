@@ -6,10 +6,10 @@
     "configurations": [
 
         {
-            "name": "Dart cli",
+            "name": "Dart demosite",
             "type": "dart-cli",
             "request": "launch",
-            "program": "${file}"
+            "program": "${workspaceRoot}/demosite/demosite.dart"
         }
     ]
 }

@@ -3,26 +3,35 @@ library pastel;
 import 'dart:io';
 import 'dart:async';
 
-part 'src/router.dart';
+part 'src/common.dart';
+part 'src/route_request.dart';
+part 'src/serve_static.dart';
 
-/// Pastel singleton class
-class Pastel {
-  static final Pastel _singleton = new Pastel._internal();
+HttpServer server;
 
-  factory Pastel() {
-    return _singleton;
-  }
+/// main entry point when a request arrives
+void handleRequest(HttpRequest request) {
+  // check for static file
+  // find the route
+  request.response.write("hi");
+  request.response.close();
+  print(server.connectionsInfo().total);
+}
 
-  // internal constructor for singleton spawning
-  Pastel._internal();
+/// handle errors emmitted by the httpserver
+void handleError(var e) => print(e.toString());
 
-  void handleRequest(HttpRequest request) {}
-  void handleError(var e) => print(e.toString());
+/// the main entry point of pastel. start serving on an address and port
+Future run(var address, int port) async {
+  server = await HttpServer.bind(address, port);
 
-  /// start serving on a address and port
-  void run(var address, int port) async {
-    HttpServer server = await HttpServer.bind(address, port);
-    server.listen(handleRequest);
-    server.handleError(handleError);
-  }
+  // change the server header to something more fun
+  server.serverHeader = defaults["serverheader"];
+
+  // bind request and error handlers
+  server.listen(handleRequest);
+  server.handleError(handleError);
+
+  // show the actual binding
+  print("listening on: ${server.address} , port: ${server.port}");
 }
