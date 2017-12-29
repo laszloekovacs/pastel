@@ -9,6 +9,7 @@
             "name": "Dart demosite",
             "type": "dart-cli",
             "request": "launch",
+            "cwd": "/Users/swipe/Documents/pastel/demosite/",
             "program": "${workspaceRoot}/demosite/demosite.dart"
         }
     ]

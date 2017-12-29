@@ -9,22 +9,30 @@ part 'src/static.dart';
 
 
 class Pastel {
-  static final Pastel _singleton = new Pastel._internal();
 
-  factory Pastel() {
-    return _singleton;
+  Pastel() {
+    requestRouter = new RequestRouter();
+    staticServer = new StaticServer();
+
+    basedir = Directory.current;
+    print("basepath is ${basedir.toString()}");
   }
 
-  Pastel._internal() {
-    router = new RequestRouter();
-  }
-
-  // class member vars
   HttpServer server = null;
-  RequestRouter router = null;
+  RequestRouter requestRouter = null;
+  StaticServer staticServer = null;
+
+
+  Directory basedir;
+
+// use only for debug
+  void printRequest(HttpRequest request) {
+    print("R - uri:${request.uri} ct:${request.headers.contentType.toString()}");
+  }
 
   /// main entry point when a request arrives
   void handleRequest(HttpRequest request) {
+    printRequest(request);
     // check for static file
     // find the route
     request.response.write("hi");
@@ -44,6 +52,6 @@ class Pastel {
     server.handleError(handleError);
 
     // show the actual binding
-    print("listening on: ${server.address.toString()} , port: ${server.port}");
+    print("Pastel.Dart is listening on ${server.address.host} port: ${server.port}");
   }
 }
