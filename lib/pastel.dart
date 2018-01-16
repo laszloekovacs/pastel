@@ -113,7 +113,7 @@ class Pastel {
 
     // change the server header to something more fun
     server.serverHeader = serverName;
-    //server.autoCompress = true;
+    server.autoCompress = true;
 
     // bind request and error handlers
     server.handleError(_handleInternalError);
