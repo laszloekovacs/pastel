@@ -7,11 +7,11 @@ typedef void ViewHandler(HttpRequest request);
 
 // mime types
 Map mimetype = {
-  "htm": "text/html", 
+  "htm": "text/html",
   "html": "text/html",
-  "css" : "text/css",
+  "css": "text/css",
   "jpg": "image/jpeg"
-  };
+};
 
 ///
 /// The server framework
@@ -69,15 +69,13 @@ class Pastel {
       var mimePair = mime.split("/");
       ContentType content = new ContentType(mimePair.first, mimePair.last);
       request.response.headers.contentType = content;
-      
 
       // headers must be written before the body
-      if(mimePair.first == "text") {
+      if (mimePair.first == "text") {
         request.response.write(reqFile.readAsStringSync());
       } else {
         request.response.add(reqFile.readAsBytesSync());
       }
-      
     }
     // call view if we have a match
     else if (routes.containsKey(req)) {
@@ -85,7 +83,7 @@ class Pastel {
     }
 
     // should show an error page
-   request.response.flush().then((_) => request.response.close());
+    request.response.flush().then((_) => request.response.close());
   }
 
   ///
