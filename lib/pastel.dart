@@ -25,7 +25,7 @@ var mimetype = {
 ///
 class Pastel {
   HttpServer server;
-  String serverName = r"Pastel.dart milestone 0 on Peace Walker";
+  String serverName = r"Pastel.dart 0 on HAL 9000";
   String contentPath;
   String basePath;
 

@@ -7,6 +7,12 @@ int refresh = 0;
 void view(HttpRequest request) {
   request.response.write("hello from pastel refresh is: $refresh");
   refresh++;
+  
+  Cookie pie = new Cookie("sesh", "223");
+  pie.httpOnly = false;
+
+
+  request.response.cookies.add(pie);
 }
 
 
