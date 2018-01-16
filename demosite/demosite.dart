@@ -2,8 +2,11 @@
 import 'package:pastel/pastel.dart';
 import 'dart:io';
 
+int refresh = 0;
+
 void view(HttpRequest request) {
-  request.response.write("hello from pastel");
+  request.response.write("hello from pastel refresh is: $refresh");
+  refresh++;
 }
 
 
