@@ -3,55 +3,89 @@ library pastel;
 import 'dart:io';
 import 'dart:async';
 
-
-
-typedef void ViewHandler(var request);
-
+typedef void ViewHandler(HttpRequest request);
 
 // mime types
-var mimetype = {
-  ".css": "text/css",
-  ".htm": "text/html",
-  ".html": "text/html",
-  ".ico": "image/x-icon",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg"
-};
-
-
+Map mimetype = {
+  "htm": "text/html", 
+  "html": "text/html",
+  "css" : "text/css",
+  "jpg": "image/jpeg"
+  };
 
 ///
 /// The server framework
 ///
 class Pastel {
   HttpServer server;
-  String serverName = r"Pastel.dart 0 on HAL 9000";
+  String serverName = "IBM HAL 9000 running Pastel 0";
   String contentPath;
   String basePath;
 
-/// registered routes used by the server
-  Map<String, ViewHandler> routes = new Map();
+  /// registered routes used by the server
+  Map<Pattern, ViewHandler> routes = new Map();
 
-/// bind a pattern to a view handler
-  void bind(String path, ViewHandler handler) {
+  /// mime type lookup helper
+  String _findMime(String path) {
+    List parts = path.split(".");
 
-    routes.putIfAbsent(path, () => handler);
-    print("path bound: $path");
+    // the last part will be the file extension, check if we have it
+    if (mimetype.containsKey(parts.last)) {
+      return mimetype[parts.last];
+    } else {
+      print("warning: unknown mime type: ${parts.last}");
+      return "text/plain";
+    }
   }
+
+  /// bind a pattern to a view handler
+  /// reject overwrites
+  void bind(Pattern path, ViewHandler handler) {
+    if (routes.containsKey(path)) {
+      print("warning: path allready registered: $path");
+    } else {
+      routes.addAll({path: handler});
+      print("ok: path bound: $path");
+    }
+  }
+
+  /// helper function, calls route func on key
+  void _callView(Pattern key, HttpRequest r) => routes[key](r);
 
   ///
   /// handleRequest
   ///
   void _handleRequest(HttpRequest request) {
-    
-    String key = request.uri.toString();
+    String req = request.uri.toString();
 
-    if(routes.containsKey(key) == true) {
-      print("found key: $key");
-      routes[key](request);
+    // try serving as a static file
+    if (FileSystemEntity.isFileSync(contentPath + req)) {
+      File reqFile = new File(contentPath + req);
+
+      // write the mime type into the header
+      String mime = _findMime(reqFile.path);
+
+      // split the mime into two
+      var mimePair = mime.split("/");
+      ContentType content = new ContentType(mimePair.first, mimePair.last);
+      request.response.headers.contentType = content;
+      
+
+      // headers must be written before the body
+      if(mimePair.first == "text") {
+        request.response.write(reqFile.readAsStringSync());
+      } else {
+        request.response.add(reqFile.readAsBytesSync());
+      }
+      
+    }
+    // call view if we have a match
+    else if (routes.containsKey(req)) {
+      _callView(req, request);
     }
 
-    request.response.close();
+    // should show an error page
+   request.response.flush().then((_) => request.response.close());
   }
 
   ///
@@ -71,7 +105,7 @@ class Pastel {
     var script = Platform.script.pathSegments.last;
 
     basePath = fpath.substring(0, fpath.length - script.length);
-    contentPath = "${basePath.toString()}${webPath}\\";
+    contentPath = "${basePath.toString()}${webPath}";
 
     print("basePath is: $basePath");
     print("contentPath is: $contentPath");
@@ -81,7 +115,7 @@ class Pastel {
 
     // change the server header to something more fun
     server.serverHeader = serverName;
-    server.autoCompress = true;
+    //server.autoCompress = true;
 
     // bind request and error handlers
     server.handleError(_handleInternalError);
