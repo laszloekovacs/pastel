@@ -3,22 +3,53 @@ library pastel;
 import 'dart:io';
 import 'dart:async';
 
+
+
+typedef void ViewHandler(var request);
+
+
+// mime types
+var mimetype = {
+  ".css": "text/css",
+  ".htm": "text/html",
+  ".html": "text/html",
+  ".ico": "image/x-icon",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg"
+};
+
+
+
 ///
 /// The server framework
-/// 
+///
 class Pastel {
   HttpServer server;
   String serverName = r"Pastel.dart milestone 0 on Peace Walker";
   String contentPath;
   String basePath;
 
-  _routeRequest(request) {}
+/// registered routes used by the server
+  Map<String, ViewHandler> routes = new Map();
+
+/// bind a pattern to a view handler
+  void bind(String path, ViewHandler handler) {
+
+    routes.putIfAbsent(path, () => handler);
+    print("path bound: $path");
+  }
 
   ///
   /// handleRequest
   ///
   void _handleRequest(HttpRequest request) {
-    _routeRequest(request);
+    
+    String key = request.uri.toString();
+
+    if(routes.containsKey(key) == true) {
+      print("found key: $key");
+      routes[key](request);
+    }
 
     request.response.close();
   }
