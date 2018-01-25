@@ -1,17 +1,16 @@
 library pastel;
 
+
 import 'dart:io';
 import 'dart:async';
 
+import 'src/HttpMime.dart';
+export 'src/HttpMime.dart';
+
+
 typedef void ViewHandler(HttpRequest request);
 
-// mime types
-Map mimetype = {
-  "htm": "text/html",
-  "html": "text/html",
-  "css": "text/css",
-  "jpg": "image/jpeg"
-};
+
 
 ///
 /// The server framework
@@ -25,18 +24,6 @@ class Pastel {
   /// registered routes used by the server
   Map<Pattern, ViewHandler> routes = new Map();
 
-  /// mime type lookup helper
-  String _findMime(String path) {
-    List parts = path.split(".");
-
-    // the last part will be the file extension, check if we have it
-    if (mimetype.containsKey(parts.last)) {
-      return mimetype[parts.last];
-    } else {
-      print("warning: unknown mime type: ${parts.last}");
-      return "text/plain";
-    }
-  }
 
   /// bind a pattern to a view handler
   /// reject overwrites
@@ -62,16 +49,10 @@ class Pastel {
     if (FileSystemEntity.isFileSync(contentPath + req)) {
       File reqFile = new File(contentPath + req);
 
-      // write the mime type into the header
-      String mime = _findMime(reqFile.path);
-
-      // split the mime into two
-      var mimePair = mime.split("/");
-      ContentType content = new ContentType(mimePair.first, mimePair.last);
-      request.response.headers.contentType = content;
+      request.response.headers.contentType = HttpMime.get(reqFile.path);
 
       // headers must be written before the body
-      if (mimePair.first == "text") {
+      if (request.response.headers.contentType.primaryType == "text") {
         request.response.write(reqFile.readAsStringSync());
       } else {
         request.response.add(reqFile.readAsBytesSync());
@@ -82,7 +63,6 @@ class Pastel {
       _callView(req, request);
     }
 
-    // should show an error page
     request.response.flush().then((_) => request.response.close());
   }
 
@@ -96,8 +76,7 @@ class Pastel {
   ///
   /// the main entry point of pastel. start serving on an address and port+
   ///
-  Future run(
-      {var address: "localhost", int port: 80, String webPath: "web"}) async {
+  Future run({var address: "localhost", int port: 80, String webPath: "web"}) async {
     //find the script's directory
     var fpath = Platform.script.toFilePath();
     var script = Platform.script.pathSegments.last;

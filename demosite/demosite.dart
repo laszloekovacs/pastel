@@ -4,7 +4,9 @@ import 'dart:io';
 int refresh = 0;
 
 void view(HttpRequest request) {
-  request.response.write("hello from pastel request is: ${request.uri.path}");
+
+  
+  request.response.write("hello from pastel request is: ${request.uri.path}, ${refresh++}");
 }
 
 void viewme(HttpRequest request) {
@@ -24,5 +26,5 @@ void main() {
   pastel.bind("/mee", viewmee);
   pastel.bind("/me", viewme);
 
-  pastel.run(port: 8080);
+  pastel.run(port: 80);
 }
