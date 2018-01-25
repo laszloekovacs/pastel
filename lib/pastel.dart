@@ -1,23 +1,24 @@
 library pastel;
 
-
 import 'dart:io';
 import 'dart:async';
 
 import 'src/HttpMime.dart';
 import 'src/HttpRouter.dart';
+
+
 export 'src/HttpMime.dart';
-export 'src/httpRouter.dart';
+export 'src/HttpRouter.dart';
+
 
 typedef void ViewHandler(HttpRequest request);
-
-
 
 ///
 /// The server framework
 ///
 class Pastel {
   HttpServer server;
+
   String serverName = "IBM HAL 9000 running Pastel 0";
   String contentPath;
   String basePath;
@@ -25,16 +26,10 @@ class Pastel {
   /// registered routes used by the server
   Map<Pattern, ViewHandler> routes = new Map();
 
-
   /// bind a pattern to a view handler
   /// reject overwrites
   void bind(Pattern path, ViewHandler handler) {
-    if (routes.containsKey(path)) {
-      print("warning: path allready registered: $path");
-    } else {
-      routes.addAll({path: handler});
-      print("ok: path bound: $path");
-    }
+    routes.putIfAbsent(path, () => handler);
   }
 
   /// helper function, calls route func on key
