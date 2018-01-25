@@ -5,8 +5,9 @@ import 'dart:io';
 import 'dart:async';
 
 import 'src/HttpMime.dart';
+import 'src/HttpRouter.dart';
 export 'src/HttpMime.dart';
-
+export 'src/httpRouter.dart';
 
 typedef void ViewHandler(HttpRequest request);
 

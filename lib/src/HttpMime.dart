@@ -3,10 +3,14 @@ import 'dart:io';
 
 
 class HttpMime {
+  
+  ///
+  /// using the file name extension, return the mime type of the requested file
+  ///
   static ContentType get(String filename) {
     List path = filename.split(".");
 
-    //from the extension of the file, return the appropriate mime type
+   
     switch (path.last) {
       case "css":
         return new ContentType("text", "css");
@@ -32,7 +36,7 @@ class HttpMime {
         return new ContentType("image", "x-icon");
 
       default:
-        print("Warning: mime type now known, sending as text/plain");
+        print("Warning: ${path.last} extension`s mime type not known, sending as text/plain");
         return new ContentType("text", "plain");
     }
   }
