@@ -2,8 +2,6 @@ import 'dart:io';
 import 'dart:async';
 
 import 'src/HttpRouter.dart';
-import 'src/HttpRequestHandler.dart';
-import 'src/HttpMime.dart';
 
 export 'src/HttpMime.dart';
 export 'src/HttpRouter.dart';
@@ -34,13 +32,6 @@ class Pastel {
   ///
   void _handleInternalError(var e) {
     print(e.toString());
-  }
-
-  ///
-  /// Convinience methot exposing the routers binding method
-  ///
-  void bind(Pattern path, HttpRequestHandler handler) {
-    router.bind(path, handler);
   }
 
   ///
