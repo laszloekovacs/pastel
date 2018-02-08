@@ -1,24 +1,43 @@
-
 import 'dart:io';
+import 'HttpRequestHandler.dart';
+
 
 ///
 /// route requests to the proper responder
 ///
+
 class HttpRouter {
-  Map<Uri, dynamic> paths;
 
-//
-// associate a uri to a responder
-//
-  void addPath(Uri uri, var handler) {
-    var result = null;
+  // a map that holds the path and the handler
+  Map <String, HttpRequestHandler> pathHandler;
 
-    result = paths.putIfAbsent(uri, () => handler);
+  //
+  // Every base path is bound to a request handler
+  //
+  void bind(String basepath, HttpRequestHandler handler) {
+    
+    HttpRequestHandler result = null;
 
-    if (result != handler) {
-      print("warning: path already being handled ${uri.toString()}");
+    pathHandler.putIfAbsent(basepath, () => handler);
+
+    if(result != handler) {
+      print("warning: path already bound, skipping ${basepath}");
+      return;
     }
+    print("bind: path added ${basepath}");
   }
 
-  void route(HttpRequest req) {}
+  //
+  // call the associated function to the path
+  //
+  void route(HttpRequest req) {
+
+
+    if(!pathHandler.containsKey(req.uri.pathSegments[0])) {
+      // this should send an error page
+      return;
+    }
+
+    pathHandler[req.uri.pathSegments[0]].render(req); 
+  }
 }
