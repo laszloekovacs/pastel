@@ -1,6 +1,5 @@
-import 'dart:io';
+import "dart:io";
 import 'HttpRequestHandler.dart';
-
 
 ///
 /// route requests to the proper responder
@@ -9,7 +8,7 @@ import 'HttpRequestHandler.dart';
 class HttpRouter {
 
   // a map that holds the path and the handler
-  Map <String, HttpRequestHandler> pathHandler;
+  Map <Pattern, HttpRequestHandler> pathHandler = new Map();
 
   //
   // Every base path is bound to a request handler
@@ -18,7 +17,7 @@ class HttpRouter {
     
     HttpRequestHandler result = null;
 
-    pathHandler.putIfAbsent(basepath, () => handler);
+    result = pathHandler.putIfAbsent(basepath, () => handler);
 
     if(result != handler) {
       print("warning: path already bound, skipping ${basepath}");
@@ -33,11 +32,13 @@ class HttpRouter {
   void route(HttpRequest req) {
 
 
-    if(!pathHandler.containsKey(req.uri.pathSegments[0])) {
-      // this should send an error page
+    if(pathHandler.containsKey(req.uri.pathSegments[0])) {
+      pathHandler[req.uri.pathSegments[0]].render(req);
       return;
+    } else {
+      // handle missing page
     }
 
-    pathHandler[req.uri.pathSegments[0]].render(req); 
+     
   }
 }

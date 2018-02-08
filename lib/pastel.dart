@@ -1,22 +1,19 @@
-library pastel;
-
 import 'dart:io';
 import 'dart:async';
 
-import 'src/HttpMime.dart';
 import 'src/HttpRouter.dart';
 import 'src/HttpRequestHandler.dart';
+import 'src/HttpMime.dart';
 
 export 'src/HttpMime.dart';
 export 'src/HttpRouter.dart';
 export 'src/HttpRequestHandler.dart';
 
-
 ///
 /// The server framework
 ///
 class Pastel {
-  HttpServer server;
+  HttpServer server = null;
   HttpRouter router = new HttpRouter();
 
   String serverName = "IBM HAL 9000 running Pastel 0";
@@ -27,7 +24,6 @@ class Pastel {
   /// handleRequest
   ///
   void _handleRequest(HttpRequest request) {
-    
     router.route(request);
 
     request.response.flush().then((_) => request.response.close());
@@ -41,10 +37,17 @@ class Pastel {
   }
 
   ///
+  /// Convinience methot exposing the routers binding method
+  ///
+  void bind(Pattern path, HttpRequestHandler handler) {
+    router.bind(path, handler);
+  }
+
+  ///
   /// the main entry point of pastel. start serving on an address and port+
   ///
-  Future run({var address: "localhost", int port: 80, String webPath: "web"}) async {
-    
+  Future run(
+      {var address: "localhost", int port: 80, String webPath: "web"}) async {
     //find the script's directory
     scriptPath = Platform.script.toFilePath();
 

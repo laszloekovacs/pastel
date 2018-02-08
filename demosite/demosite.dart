@@ -1,18 +1,21 @@
 import 'package:pastel/pastel.dart';
+import 'package:pastel/src/HttpRequestHandler.dart';
 import 'dart:io';
 
+int refresh = 0;
 
-
-void view(HttpRequest request) {
-
-  request.response.write("hello from pastel request is: ${request.uri.path}, ${refresh++}");
+class rootHandler implements HttpRequestHandler {
+  @override
+  void render(HttpRequest req) {
+    req.response
+        .write("hello from pastel request is: ${req.uri.path}, ${refresh++}");
+  }
 }
-
 
 void main() {
   Pastel pastel = new Pastel();
 
-  pastel.bind("/", view);
-
+  pastel.router.bind("/", new rootHandler());
+  pastel.router.bind("help/main", new rootHandler());
   pastel.run(port: 80);
 }
