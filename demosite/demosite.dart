@@ -26,5 +26,5 @@ void main() {
   pastel.bind("/mee", viewmee);
   pastel.bind("/me", viewme);
 
-  pastel.run(port: 80);
+  pastel.run(port: 8080);
 }
